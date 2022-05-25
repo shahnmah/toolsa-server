@@ -28,7 +28,13 @@ async function run() {
             const tools = await cursor.toArray();
             res.send(tools);
           });
-       
+        // get api for load all reviews
+        app.get('/review', async (req, res) => {
+            const query = {};
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews);
+          });
     }
     finally {
 
