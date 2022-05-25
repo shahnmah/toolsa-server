@@ -14,12 +14,11 @@ app.use(express.json());
 // connection uri
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster2.ic3nj.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-
 async function run() {
     try {
         await client.connect();
-        const toolCollection = client.db('toolsa').collection('tools');
-        const reviewCollection = client.db('toolsa').collection('reviews');
+        const toolCollection = client.db('toolCollection').collection('tools');
+        const reviewCollection = client.db('reviewCollection').collection('reviews');
 
         // get api for load all tools
         app.get('/tool', async (req, res) => {
