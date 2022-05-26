@@ -34,6 +34,14 @@ async function run() {
             const reviews = await cursor.toArray();
             res.send(reviews);
           });
+
+        //   load tool data using id
+        app.get('/buyNow/:id', async(req, res)=>{
+            const id = req.params.id;
+            const query= {_id: ObjectId(id)}
+            const tool = await busCollection.findOne(query)
+            res.send(tool)
+          })
     }
     finally {
 
