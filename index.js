@@ -19,6 +19,7 @@ async function run() {
     await client.connect();
     const toolCollection = client.db('toolCollection').collection('tools');
     const reviewCollection = client.db('reviewCollection').collection('reviews');
+    const purchaseCollection = client.db('purchaseCollection').collection('purchases');
 
     // get api for load all tools
     app.get('/tool', async (req, res) => {
@@ -48,6 +49,15 @@ async function run() {
       const newReview = await reviewCollection.insertOne(data)
       res.send(newReview)
     })
+
+    // post api for add purchase
+
+    app.post('/purchase', async (req, res) => {
+      const purchase = req.body;
+      const result = await purchaseCollection.insertOne(purchase);
+      res.send(result);
+    });
+
   }
   finally {
 
