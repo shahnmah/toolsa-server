@@ -72,6 +72,30 @@ async function run() {
       const result = await toolCollection.updateOne(filter, updateDoc);
       res.send(result)
     })
+
+    // load data for specific user using email
+    app.get('/purchase', async(req, res)=>{
+      const email = req.query.email;
+      const query = {email: email}
+      const purchaseItems = await purchaseCollection.find(query).toArray();
+      res.send(purchaseItems)
+    })
+
+    // *********
+    // delete order api using id
+    app.delete('/purchase/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const deleteItem = await purchaseCollection.deleteOne(query);
+      res.send(deleteItem)
+    })
+
+    // add product api 
+    app.post('/addProduct', async (req, res) => {
+      const product = req.body;
+      const result = await toolCollection.insertOne(purchase);
+      res.send(result);
+    });
   }
   finally {
 
