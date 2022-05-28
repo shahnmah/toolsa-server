@@ -30,19 +30,18 @@ async function run() {
       res.send(tools);
     });
 
-    // 
-    // app.put('/user/:email', async (req, res) => {
-    //   const email = req.params.email;
-    //   const user = req.body;
-    //   const filter = { email: email };
-    //   const options = { upsert: true };
-    //   const updateDoc = {
-    //     $set: user,
-    //   };
-    //   const result = await userCollection.updateOne(filter, updateDoc, options);
-    //   const token = jwt.sign({email: email}, process.env.ACCESS.TOKEN)
-    //   res.send({result, toekn})
-    // })
+    
+    app.put('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send(result)
+    })
 
     // get api for load all reviews
     app.get('/review', async (req, res) => {
@@ -120,6 +119,14 @@ async function run() {
       res.send(users);
     })
 
+    
+    app.get('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = await userCollection.findOne({email: email});
+      res.send(user)
+     
+    })
+
     // admin role api
     app.put('/user/admin/:email', async (req, res) => {
       const email = req.params.email;
@@ -133,6 +140,13 @@ async function run() {
       res.send(result)
     })
 
+    // 
+    // app.get('/admin/:email', async(req, res) =>{
+    //   const email = req.params.email;
+    //   const user = await userCollection.findOne({email: email});
+    //   const admin = role === 'admin'
+    //   res.send(admin)
+    // })
   }
   finally {
 
