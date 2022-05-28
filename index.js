@@ -20,6 +20,7 @@ async function run() {
     const toolCollection = client.db('toolCollection').collection('tools');
     const reviewCollection = client.db('reviewCollection').collection('reviews');
     const purchaseCollection = client.db('purchaseCollection').collection('purchases');
+    const userCollection = client.db('userCollection').collection('users');
 
     // get api for load all tools
     app.get('/tool', async (req, res) => {
@@ -28,6 +29,20 @@ async function run() {
       const tools = await cursor.toArray();
       res.send(tools);
     });
+
+    // 
+    app.put('/user/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.send(result)
+    })
+
     // get api for load all reviews
     app.get('/review', async (req, res) => {
       const query = {};
@@ -60,10 +75,10 @@ async function run() {
 
 
     // api for update using id
-    app.patch('/buyNow/:id', async(req, res)=>{
+    app.patch('/buyNow/:id', async (req, res) => {
       const id = req.params.id;
       const data = req.body;
-      const filter = { _id: ObjectId(id)};
+      const filter = { _id: ObjectId(id) };
       const updateDoc = {
         $set: {
           available: data.available
@@ -74,27 +89,27 @@ async function run() {
     })
 
     // load data for specific user using email
-    app.get('/purchase', async(req, res)=>{
+    app.get('/purchase', async (req, res) => {
       const email = req.query.email;
-      const query = {email: email}
+      const query = { email: email }
       const purchaseItems = await purchaseCollection.find(query).toArray();
       res.send(purchaseItems)
     })
 
     // *********
     // delete order api using id
-    app.delete('/purchase/:id', async(req, res)=>{
+    app.delete('/purchase/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       const deleteItem = await purchaseCollection.deleteOne(query);
       res.send(deleteItem)
     })
 
     // add product api 
-    app.post('/addProduct', async (req, res) => {
-      const product = req.body;
-      const result = await toolCollection.insertOne(purchase);
-      res.send(result);
+    app.post('/addproduct', async (req, res) => {
+      const data = req.body;
+      const newProduct = await toolCollection.insertOne(data)
+      res.send(newProduct)
     });
   }
   finally {
