@@ -147,6 +147,14 @@ async function run() {
     //   const admin = role === 'admin'
     //   res.send(admin)
     // })
+
+    // payment api
+    app.get('/purchase/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = { _id: ObjectId(id)};
+      const purchaseItem = await purchaseCollection.findOne(query)
+      res.send(purchaseItem)
+    }) 
   }
   finally {
 
