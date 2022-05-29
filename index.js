@@ -165,19 +165,33 @@ async function run() {
     })
 
     // update after payment successful
-    app.patch('/purchase/:id', async(req, res)=>{
+    app.patch('/purchase/:id', async (req, res) => {
       const id = req.params.id;
       const payment = req.body;
       const filter = { _id: ObjectId(id) };
-      const updateDoc ={
-        $set:{
+      const updateDoc = {
+        $set: {
           paid: 'true',
-          // transactionId : payment.transactionId
         }
       }
       const result = await purchaseCollection.updateOne(filter, updateDoc);
       res.send(result)
+    })
 
+    // load all products
+    app.get('/tools', async (req, res) => {
+      const query = {};
+      const cursor = toolCollection.find(query);
+      const tools = await cursor.toArray();
+      res.send(tools);
+    })
+
+    // delete product using id
+    app.delete('/tools/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const deleteItem = await toolCollection.deleteOne(query);
+      res.send(deleteItem)
     })
   }
   finally {
@@ -185,7 +199,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
 
 app.get('/', (req, res) => {
   res.send('Okay with toolsa')
