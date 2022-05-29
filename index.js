@@ -97,7 +97,6 @@ async function run() {
       res.send(purchaseItems)
     })
 
-    // *********
     // delete order api using id
     app.delete('/purchase/:id', async (req, res) => {
       const id = req.params.id;
@@ -120,7 +119,7 @@ async function run() {
       res.send(users);
     })
 
-
+    // get user using email
     app.get('/users/:email', async (req, res) => {
       const email = req.params.email;
       const user = await userCollection.findOne({ email: email });
@@ -140,14 +139,6 @@ async function run() {
       const result = await userCollection.updateOne(filter, updateDoc)
       res.send(result)
     })
-
-    // 
-    // app.get('/admin/:email', async(req, res) =>{
-    //   const email = req.params.email;
-    //   const user = await userCollection.findOne({email: email});
-    //   const admin = role === 'admin'
-    //   res.send(admin)
-    // })
 
     // get purchase item using id
     app.get('/purchase/:id', async (req, res) => {
@@ -171,6 +162,22 @@ async function run() {
       res.send({
         clientSecret: paymentIntent.client_secret,
       });
+    })
+
+    // update after payment successful
+    app.patch('/purchase/:id', async(req, res)=>{
+      const id = req.params.id;
+      const payment = req.body;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc ={
+        $set:{
+          paid: 'true',
+          // transactionId : payment.transactionId
+        }
+      }
+      const result = await purchaseCollection.updateOne(filter, updateDoc);
+      res.send(result)
+
     })
   }
   finally {
