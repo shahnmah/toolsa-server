@@ -3,6 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -30,7 +31,7 @@ async function run() {
       res.send(tools);
     });
 
-    
+
     app.put('/user/:email', async (req, res) => {
       const email = req.params.email;
       const user = req.body;
@@ -119,12 +120,12 @@ async function run() {
       res.send(users);
     })
 
-    
+
     app.get('/users/:email', async (req, res) => {
       const email = req.params.email;
-      const user = await userCollection.findOne({email: email});
+      const user = await userCollection.findOne({ email: email });
       res.send(user)
-     
+
     })
 
     // admin role api
@@ -148,13 +149,29 @@ async function run() {
     //   res.send(admin)
     // })
 
-    // payment api
-    app.get('/purchase/:id', async(req, res) =>{
+    // get purchase item using id
+    app.get('/purchase/:id', async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       const purchaseItem = await purchaseCollection.findOne(query)
       res.send(purchaseItem)
-    }) 
+    })
+
+    // payment intent api 
+    app.post("/create-payment-intent", async (req, res) => {
+      const purchaseItems = req.body;
+      const itemPrice = purchaseItems.amount;
+      const amount = itemPrice * 100;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "usd",
+        payment_method_types: ["card"],
+
+      });
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
+    })
   }
   finally {
 
